@@ -138,12 +138,12 @@ class sound():
             if value>channels:
                 return 0, 0
             else:
-                var1=-value*80/channels
+                var1=-value*100/channels
         else:
             if value>channels:
                 return 0, 0
             else:
-                var1=value*80/channels
+                var1=value*100/channels
         if listenery>sourcey:
             value=listenery-sourcey
         else:

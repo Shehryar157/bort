@@ -95,4 +95,4 @@ class weapon:
             self.rs_object = None
 
 m4 = weapon("M4 rifle", random.randint(8, 10), "5.56 caliber rounds", "5.56 shells", 12, 30, 30, False, False, time.time(), 0.2, None, None, "weapons/m4 rifle/draw.ogg", "weapons/m4 rifle/fire1.ogg", "weapons/m4 rifle/reload.ogg", "weapons/m4 rifle/click.ogg")
-glock17 = weapon("glock17", random.randint(3, 4), "9mm", "9mm shells", 9, 17, 17, False, False, time.time(), 0.4, None, None, "weapons/glock17/draw.ogg", "weapons/glock17/fire1.ogg", "weapons/glock17/reload.ogg", "weapon.glock17.click.ogg")
+glock17 = weapon("glock17", random.randint(3, 4), "9mm", "9mm shells", 9, 17, 17, False, False, time.time(), 0.4, None, None, "weapons/glock17/draw.ogg", "weapons/glock17/fire1.ogg", "weapons/glock17/reload.ogg", "weapons/glock17/click.ogg")

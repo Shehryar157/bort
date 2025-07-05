@@ -38,7 +38,7 @@ def startGame():
     enemy_number = 10
     spawn_timer = time.time()
     while fence.health > 0:
-        if enemy_number >= wave:
+        if char.kills >= enemy_number:
             wave += 1
             enemy_number = wave * 5
         ss.update_spatial_audio(char.x, char.y)
@@ -47,8 +47,8 @@ def startGame():
         wave_enemies = wave*enemy_number
         if char.kills == wave_enemies:
             wave += 1
-        if time.time() - spawn_timer >= random.randint(3, 5):
-            zombies.append(classes.zombie(3, random.randint(1, 10), random.randint(21, 25), 10, random.randint(5, 8), 0.7, [0.8, 0.9, 1, 1.2, 1.3, 1.5, 1.6], time.time()))
+        if time.time() - spawn_timer >= random.randint(5, 8):
+            zombies.append(classes.zombie(3, random.randint(1, 10), random.randint(21, 25), 10, random.randint(5, 8), 0.9, [0.8, 0.9, 1, 1.2, 1.3, 1.5, 1.6], time.time()))
             spawned_zombies += 1
             spawn_timer = time.time()
         for undead in zombies:
