@@ -11,10 +11,11 @@ class wall:
         self.electrified = electrified
 
 class player:
-    def __init__(self, x=random.randint(1, 10), y=0, health=100, score=0, cash=0, kills=0, weapon=None, weapons={weapons.m4.name: weapons.m4}, inv={}):
+    def __init__(self, x=random.randint(1, 10), y=0, health=100, accuracy=100, score=0, cash=0, kills=0, weapon=None, weapons={weapons.m4.name: weapons.m4}, inv={}):
         self.x = x
         self.y = y
         self.health = health
+        self.accuracy = accuracy
         self.score = score
         self.cash = cash
         self.kills = kills
@@ -53,7 +54,6 @@ class player:
                 if value > 0:
                     m.add_item(f"{key}, {value}")
             choice = m.run(intromsg="Inventory")
-            print(m.menu_choices[choice])
         item_menu()
     def comms(self):
         comms_menu = menu.menu()
@@ -115,7 +115,7 @@ class enemy:
         char.score += self.score + (4 if self.y >= 21 else 2 if self.y >= 13 else 0)
         ss.play(file=self.bodyfall, source_object=self)
         global things
-        things.append(currency("money", random.randint(200, 350), self.x, 0, "items/money_loop1.ogg", "items/get_money1.ogg"))
+        things.append(currency("Dinar", random.randint(200, 350), self.x, 0, "items/money_loop1.ogg", "items/get_Dinar1.ogg"))
 
 class zombie(enemy):
     def __init__(self, score, x, y, health, strength, speed, times_list, attack_timer, loot_sound="items/money_loop1.ogg", bodyfall=None):
@@ -135,7 +135,7 @@ class item:
     def get(self, char):
         ss.play(file=self.pickup_sound, pan=25)
         speak(f"{self.name}")
-        if self.name == "money" and self.amount:
+        if self.name == "Dinar" and self.amount:
             char.cash += self.amount
         else:
             char.inv[self.name] = self

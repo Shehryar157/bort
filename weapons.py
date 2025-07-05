@@ -45,6 +45,7 @@ class weapon:
         self.reload_sound = reload_sound
         self.click = click
         self.firing_timer = time.time()
+        self.reset()
     def draw(self, char):
         self.drawing = True
         char.weapon = self
@@ -92,6 +93,8 @@ class weapon:
         else:
             self.reloading = False
             self.rs_object = None
+    def reset(self):
+        self.bullet_count = self.capacity
 
 m4 = weapon("M4 rifle", random.randint(8, 10), "5.56 caliber rounds", "5.56 shells", 12, 30, 30, False, False, time.time(), 0.2, None, None, "weapons/m4 rifle/draw.ogg", "weapons/m4 rifle/fire1.ogg", "weapons/m4 rifle/reload.ogg", "weapons/m4 rifle/click.ogg")
 glock17 = weapon("glock17", random.randint(3, 4), "9mm", "9mm shells", 9, 17, 17, False, False, time.time(), 0.4, None, None, "weapons/glock17/draw.ogg", "weapons/glock17/fire1.ogg", "weapons/glock17/reload.ogg", "weapons/glock17/click.ogg")

@@ -82,7 +82,6 @@ class sound():
     def volume(self, value):
         if not self.handle:
             return False
-        print(value)
         res = value / 100
         self.handle.set_volume(res)
 
