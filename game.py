@@ -48,7 +48,7 @@ def startGame():
         char.accuracy = 100 if fired_shots == 0 and successful_shots == 0 else successful_shots * 100 / fired_shots
         if progress_to_wave >= enemy_number:
             wave += 1
-            enemy_number = wave * 3
+            enemy_number = wave * 5
         ss.update_spatial_audio(char.x, char.y)
         if char.weapon is not None:
             char.weapon.check()
