@@ -61,8 +61,8 @@ class soundsystem:
         self.active_sounds.clear()
         for sound_obj, _ in self.unmanaged_sounds:
             sound_obj.stop()
+            sound_obj.close()
         self.unmanaged_sounds.clear()
-
 
     def stop_music(self):
         if  self.music:
@@ -99,10 +99,8 @@ class soundsystem:
                 self.active_sounds.remove(item)
         self.cleanup()
     def cleanup(self):
-        sounds_to_remove = []
-        for sound_obj in self.unmanaged_sounds:
-            if not sound_obj.playing:
-                sound_obj.close()
-                sounds_to_remove.append(sound_obj)
+        sounds_to_remove = [sound_obj for sound_obj in self.unmanaged_sounds if not sound_obj.playing]
         for sound_obj in sounds_to_remove:
+            sound_obj.stop()
+            sound_obj.close()
             self.unmanaged_sounds.remove(sound_obj)
