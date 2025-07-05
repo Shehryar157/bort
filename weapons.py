@@ -66,9 +66,8 @@ class weapon:
             available_sounds = [file.removeprefix("sounds/") for file in available_sounds]
             self.firing_sound = random.choice(available_sounds)
             ss.play(file=self.firing_sound, pitch=random.randint(90, 110))
-            #shelldrop_sound = "weapons/shells/" + self.shell_type + str(random.randint(1, 2)) + ".ogg"
-            #print(shelldrop_sound)
-            #ss.play(file=shelldrop_sound)
+            shelldrop_sound = "weapons/shells/" + self.shell_type + str(random.randint(1, 4)) + ".ogg"
+            ss.play(file=shelldrop_sound)
             self.firing_timer = time.time()
         else:
             ss.play(file=self.click)
