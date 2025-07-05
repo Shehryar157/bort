@@ -24,7 +24,7 @@ class player:
         self.inv = inv
         self.lastMove_time = time.time()
         self.last_comms_point = 0
-        self.required_kills = 1
+        self.required_kills = 15
         self.used_comms = False
     def move(self, direction):
         current_time = time.time()

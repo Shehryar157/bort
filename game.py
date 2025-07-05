@@ -49,6 +49,7 @@ def startGame():
         if progress_to_wave >= enemy_number:
             wave += 1
             enemy_number = wave * 5
+            progress_to_wave = 0
         ss.update_spatial_audio(char.x, char.y)
         if char.weapon is not None:
             char.weapon.check()
