@@ -1,9 +1,12 @@
-import pygame, time, random, menu, os
+import pygame, time, random, menu, os, json
 from speech import speak
 from soundsystem import soundsystem
 ss = soundsystem.get_instance()
 
+unlocked_weapons = {}
+locked_weapons = {}
 bullets_list = []
+
 
 class projectile:
     def __init__(self, x, y, damage):
@@ -26,7 +29,7 @@ class magazine:
 mag1 = magazine("9MM", 15)
 
 class weapon:
-    def __init__(self, name, power, cal, shell_type, range, capacity, bullet_count, reloading, drawing, firing_timer, time_limit, ds_object, rs_object, drawing_sound, firing_sound, reload_sound, click):
+    def __init__(self, name, power, cal, shell_type, range, capacity, bullet_count, price, reloading, drawing, firing_timer, time_limit, ds_object, rs_object, drawing_sound, firing_sound, reload_sound, click):
         self.name = name
         self.power= power
         self.cal = cal
@@ -34,6 +37,7 @@ class weapon:
         self.range = range
         self.capacity = capacity
         self.bullet_count = bullet_count
+        self.price = price
         self.drawing = drawing
         self.reloading = reloading
         self.firing_timer = firing_timer
@@ -56,14 +60,12 @@ class weapon:
             global bullets_list
             bullets_list.append(projectile(char.x, char.y+1, self.power))
             self.bullet_count -= 1
-            firing_sounds = os.listdir("sounds/weapons/" + self.name)
-            available_sounds = []
-            for file in firing_sounds:
-                if "fire" not in file:
-                    firing_sounds.remove(file)
-                else:
-                    file = os.path.join("sounds/weapons/" + self.name, file)
-                    available_sounds.append(file)
+            available_sounds = [
+                os.path.join("sounds/weapons", self.name, file)
+                for file in os.listdir(os.path.join("sounds/weapons", self.name))
+                if "fire" in file
+            ]
+            print(available_sounds)
             available_sounds = [file.removeprefix("sounds/") for file in available_sounds]
             self.firing_sound = random.choice(available_sounds)
             ss.play(file=self.firing_sound, pitch=random.randint(90, 110))
@@ -95,6 +97,27 @@ class weapon:
             self.rs_object = None
     def reset(self):
         self.bullet_count = self.capacity
+    def buy(self, wealth_value):
+        unlocked_weapons[self.name] = self
+        wealth_value -= self.price
+        ss.play(file="actions/buy" + str(random.randint(1, 3)) + ".ogg")
+        speak(f"Purchased {self.name}")
+        with open("game data/data.json", "r") as file:
+            essential_stats = json.load(file)
+        essential_stats["money"] = wealth_value
+        with open("game data/data.json", "w") as file:
+            json.dump(essential_stats, file)
 
-m4 = weapon("M4 rifle", random.randint(8, 10), "5.56 caliber rounds", "5.56 shells", 12, 30, 30, False, False, time.time(), 0.2, None, None, "weapons/m4 rifle/draw.ogg", "weapons/m4 rifle/fire1.ogg", "weapons/m4 rifle/reload.ogg", "weapons/m4 rifle/click.ogg")
-glock17 = weapon("glock17", random.randint(3, 4), "9mm", "9mm shells", 9, 17, 17, False, False, time.time(), 0.4, None, None, "weapons/glock17/draw.ogg", "weapons/glock17/fire1.ogg", "weapons/glock17/reload.ogg", "weapons/glock17/click.ogg")
+m4 = weapon("M4 rifle", random.randint(8, 10), "5.56 caliber rounds", "5.56 shells", 12, 30, 30, None, False, False, time.time(), 0.2, None, None, "weapons/m4 rifle/draw.ogg", "weapons/m4 rifle/fire1.ogg", "weapons/m4 rifle/reload.ogg", "weapons/m4 rifle/click.ogg")
+glock17 = weapon("glock17", random.randint(3, 4), ".9MM rounds", "9mm shells", 9, 17, 17, None, False, False, time.time(), 0.4, None, None, "weapons/glock17/draw.ogg", "weapons/glock17/fire1.ogg", "weapons/glock17/reload.ogg", "weapons/glock17/click.ogg")
+mp5 = weapon("mp5 sub-machinegun", random.randint(6, 9), ".9MM rounds", "9mm shells", 12, 30, 30, 2000, False, False, time.time(), 0.15, None, None, "weapons/mp5 sub-machinegun/draw.ogg", "weapons/mp5 sub-machinegun/fire1.ogg", "weapons/mp5 sub-machinegun/reload.ogg", "weapons/mp5 sub-machinegun/click.ogg")
+
+locked_weapons[mp5.name] = mp5
+unlocked_weapons[m4.name] = m4
+unlocked_weapons[glock17.name] = glock17
+
+all_weapons = {
+    m4.name: m4,
+    glock17.name: glock17,
+    mp5.name: mp5
+}

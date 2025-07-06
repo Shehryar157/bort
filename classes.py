@@ -64,7 +64,9 @@ class player:
             comms_menu.add_item("Request 7.62 caliber ammo")
             choice = comms_menu.run()
             if comms_menu.menu_choices[choice] == "Request .9MM ammo":
-                self.inv[".9MM rounds"] = self.inv.get(".9MM rounds", 0) + 60
+                comms_timer = time.time()
+                if time.time() - comms_timer >= 5:
+                    self.inv[".9MM rounds"] = self.inv.get(".9MM rounds", 0) + 60
             elif comms_menu.menu_choices[choice] == "Request 5.56 caliber ammo":
                 self.inv["5.56 caliber rounds"] = self.inv.get("5.56 caliber rounds", 0) + 60
             elif comms_menu.menu_choices[choice] == "Request 7.62 caliber ammo":

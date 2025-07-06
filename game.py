@@ -1,29 +1,48 @@
-import pygame, menu, classes, time, random, weapons
+import pygame, menu, classes, time, random, weapons, json
 from speech import speak
+from copy import deepcopy
 from soundsystem import soundsystem
 ss = soundsystem.get_instance()
 pygame.init()
 pygame.display.set_mode((600, 400))
 pygame.display.set_caption("menu")
 m = menu.menu()
+
+wealth = None
 def main():
+    global wealth
+    with open("game data/data.json", "r") as file:
+        essential_stats = json.load(file)
+        wealth = essential_stats["money"]
+        weapons.unlocked_weapons.clear()
+        for weapon_name in essential_stats["unlocked_weapons"]:
+            if weapon_name in weapons.all_weapons:
+                weapons.unlocked_weapons[weapon_name] = weapons.all_weapons[weapon_name]
     while True:
         ss.set_music("music/menumusic.ogg", volume=50)
         m.reset() #Make sure nothing is left in our menu 
         m.add_item("play")
-        m.add_item("store")
+        m.add_item("visit the armory")
         m.add_item("exit")
         choice = m.run(intromsg="Hello")
         print(m.menu_choices[choice])
         if m.menu_choices[choice] == "play":
             startGame()
+        elif m.menu_choices[choice] == "visit the armory":
+            store()
         elif m.menu_choices[choice] == "exit":
+            unlocked_weapon_names_for_save = {name: {} for name in weapons.unlocked_weapons.keys()}
+            data_to_save = {"money": wealth, "unlocked_weapons": unlocked_weapon_names_for_save}
+            with open("game data/data.json", "w") as file:
+                json.dump(data_to_save, file, indent=4)
             break
 
 def startGame():
+    global wealth
     ss.set_music("music/game1.ogg", volume=20)
     clock = pygame.time.Clock()
-    char = classes.player(random.randint(1, 10), 0, 100, "100%", 0, 0, 0, None, {weapons.m4.name: weapons.m4, weapons.glock17.name: weapons.glock17}, {})
+    char = classes.player(random.randint(1, 10), 0, 100, "100%", 0, 0, 0, None, {}, {})
+    char.weapons = deepcopy(weapons.unlocked_weapons)
     for firearm in char.weapons:
         char.weapons[firearm].reset()
     _9mm_cal_bullets = 45
@@ -157,6 +176,7 @@ def startGame():
                     char.weapon.fire(char)
                     fired_shots += 1
         if fence.health <= 0:
+            wealth += char.cash
             break
             ss.destroy()
         clock.tick(60)
@@ -167,9 +187,33 @@ def startGame():
             m2.add_item(f"You were overrun at wave {wave}")
             m2.add_item(f"About {spawned_zombies} zombies spawned on the field")
             m2.add_item(f"You took down {char.kills} zombies")
+            m2.add_item(f"Your score is {char.score}")
             choice = m2.run(intromsg="Post game stats")
             break
-        
     postgame_menu()
+
+def store():
+    store_menu = menu.menu()
+    def make_store_menu():
+        global wealth
+        store_menu.reset()
+        for weaponName in weapons.locked_weapons.keys():
+            store_menu.add_item(weaponName)
+        store_menu.add_item("leave the armory")
+        choice = store_menu.run()
+        selected_weapon = store_menu.menu_choices[choice]
+        if selected_weapon in weapons.locked_weapons and selected_weapon not in weapons.unlocked_weapons:
+            if wealth >= weapons.locked_weapons[selected_weapon].price:
+                weapons.locked_weapons[selected_weapon].buy(wealth)
+                with open("game data/data.json", "r") as file:
+                    essential_stats = json.load(file)
+                    wealth = essential_stats["money"]
+            else:
+                speak("Not enough money")
+        elif selected_weapon in weapons.unlocked_weapons:
+            speak("You already own this")
+        elif selected_weapon not in weapons.locked_weapons:
+            pass
+    make_store_menu()
 
 main()
